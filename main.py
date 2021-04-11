@@ -51,3 +51,6 @@ for i in range(number_of_hidden_layers):
 y = x.dot(w2)
 print('\nOutput:')
 print(y)
+
+
+# Пук среньк
