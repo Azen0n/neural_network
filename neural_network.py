@@ -28,17 +28,19 @@ class NeuralNetwork:
         elements_count = self.number_of_input_elements
         neurons_count = self.number_of_neurons
 
-        for i in range(self.number_of_hidden_layers):
+        i = 1
+        for hidden_layer in self.hidden_layers:
             weights = np.random.randn(elements_count, neurons_count)
-            hidden_layer = elements.dot(weights)
-            print('\nHidden layer %s:' % (i + 1))
-            print(hidden_layer)
+            hidden_layer.array = elements.dot(weights)
+            print('\nHidden layer %s:' % i)
+            print(hidden_layer.array)
 
-            elements = lrs.ActivationFunction.activate(self.activation_function, hidden_layer, self.function_type)
+            elements = lrs.ActivationFunction.activate(self.activation_function, hidden_layer.array, self.function_type)
 
             print('\nResult after activation function:')
             print(elements)
             elements_count = self.number_of_neurons
+            i += 1
 
         weights = np.random.randn(elements_count, self.number_of_output_elements)
 
