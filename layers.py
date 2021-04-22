@@ -58,11 +58,21 @@ class ActivationFunction(Layer):
     def unvectorized_sigmoid(self, sum):
         return 1.0 / (1.0 + np.exp(-sum))
 
+    def unvectorized_tanh(self, sum):
+        return (2.0 / (1.0 + np.exp(-2 * sum))) - 1.0
+
+    def unvectorized_leaky_relu(self, sum):
+        return max(0.1 * sum, sum)
+
     def activate(self, array, function_type):
         if function_type == 'relu':
             vectorized_function = np.vectorize(self.unvectorized_relu)
         elif function_type == 'sigmoid':
             vectorized_function = np.vectorize(self.unvectorized_sigmoid)
+        elif function_type == 'tanh':
+            vectorized_function = np.vectorize(self.unvectorized_tanh)
+        elif function_type == 'leaky relu':
+            vectorized_function = np.vectorize(self.unvectorized_leaky_relu)
         else:
             vectorized_function = np.vectorize(self.unvectorized_relu)
 
