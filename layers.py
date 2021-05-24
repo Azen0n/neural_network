@@ -113,6 +113,8 @@ class ActivationFunction(Layer):
         self.function_type = function_type
         # Теперь сразу в конструкторе определяем функцию, которая будет храниться в function
         # TODO: Может, отдельный класс для каждой функции?..
+
+        # TODO: @np.vectorize
         if function_type == 'relu':
             self.function = np.vectorize(unvectorized_relu)
         elif function_type == 'sigmoid':
@@ -134,6 +136,7 @@ class ActivationFunction(Layer):
         self.array = self.function(elements)
 
         # Сохранение элементов для backwards
+        # Но ведь можно просто обращаться к self.array, а так я его дублирую... Ну и ладно
         self.save(self.array)
 
         print(self.array)
@@ -154,7 +157,7 @@ class ActivationFunction(Layer):
         if self.function_type == 'relu':
             return 1.0 if array >= 0.0 else 0.0
         elif self.function_type == 'sigmoid':
-            return (1.0 - array).dot(array) * upstream_gradient
+            return (1.0 - array).dot(array.T) * upstream_gradient
         elif self.function_type == 'tanh':
             return 1.0 - np.power(self.function(array), 2)
         elif self.function_type == 'leaky relu':
@@ -212,6 +215,20 @@ if __name__ == "__main__":
          [2.0, 1.0, 0.1]])
     arr2 = softmax(test)
     print(arr2)
+
+    a = np.array([[-1, 2, 3]])
+    print(a)
+    b = a.reshape(3, 1)
+    print(b)
+    c = a.T
+    print(c)
+
+    @np.vectorize
+    def func(x):
+        return max(0.0, x)
+
+    f = func(a)
+    print(f)
 
     input_layer_classification = InputLayer(20, 100)
     output_layer_classification = OutputLayer(20, 100)

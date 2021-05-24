@@ -3,10 +3,10 @@ import neural_network as nn
 
 number_of_vectors = 1
 # input и output должны быть равны
-number_of_input_elements = 5
-number_of_output_elements = 5
+number_of_input_elements = 4
+number_of_output_elements = 4
 
-number_of_neurons = 4
+number_of_neurons = 5
 number_of_hidden_layers = 1
 # relu, sigmoid, tanh, leaky relu
 # softmax, l2
