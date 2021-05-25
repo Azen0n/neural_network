@@ -51,7 +51,7 @@ def softmax(x):
 # reshape softmax to 2d so np.dot gives matrix multiplication
 def softmax_derivative(x):
     s = x.reshape(-1, 1)
-    return np.diag(s) - s.dot(s.T)
+    return np.diagflat(s) - s.dot(s.T)
 
 
 def l2(x, y):
