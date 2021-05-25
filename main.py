@@ -1,10 +1,10 @@
 import numpy as np
 import neural_network as nn
 
-number_of_vectors = 5
+number_of_vectors = 1
 
 # Для регрессии: input = output
-# Для классификации: input = 2, output = 1
+# Для классификации: input = 2, output = 2
 number_of_input_elements = 2
 number_of_output_elements = 2
 

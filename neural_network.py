@@ -25,10 +25,10 @@ class NeuralNetwork:
         # Генерация входных и выходных данных при задаче регрессии
         else:
             self.input_layer = lrs.InputLayer(number_of_vectors, number_of_input_elements)
-            lrs.InputLayer.generate(self.input_layer)
+            lrs.InputLayer.generate_regression(self.input_layer)
 
             self.output_layer = lrs.OutputLayer(number_of_vectors, number_of_output_elements)
-            lrs.OutputLayer.generate(self.output_layer, self.input_layer)
+            lrs.OutputLayer.generate_regression(self.output_layer, self.input_layer)
 
         # Список всех слоев, включая слои входных, выходных данных и слои функций активации
         self.layers = list()
@@ -46,6 +46,7 @@ class NeuralNetwork:
         # Веса выходного слоя генерируются здесь
         lrs.OutputLayer.generate_weights(self.output_layer, self.layers[-3].number_of_neurons)
 
+    # Проход вперед, возвращает предсказанные данные
     def forward(self):
         print('\nLayer 1 (input layer):')
         elements = self.input_layer.array
@@ -54,29 +55,13 @@ class NeuralNetwork:
         for index, layer in enumerate(self.layers[1:]):
             print('\nLayer %s (' % (index + 2), end="")
             elements = layer.forward(elements)
-            # TODO: Если для каждого скрытого слоя задавать свое количество нейронов, то первый переметр должен быть
-            #  self.prev.number_of_neurons, то есть придется добавить отдельное поле для хранения предыдущего слоя
-            # weights = np.random.randn(self.number_of_neurons, self.number_of_neurons)
 
         print('\nActual output:')
         print(self.layers[-2].array)
 
         return self.layers[-2].predicted_array
 
-    def backward(self):
-        upstream_gradient = 1.0
-
-        # С L2 все сложно
-        n = -1
-        if self.function_types[-1] == 'l2':
-            n = -2
-            upstream_gradient = self.layers[-1].backward(upstream_gradient, self.output_layer.array)
-
-        for index, layer in reversed(list(enumerate(self.layers[1:n]))):
-            upstream_gradient, grad_elements = layer.backward(upstream_gradient)
-
-        return upstream_gradient
-
+    # Обучение весов
     def train(self, number_of_epochs, learning_rate):
         # Веса для первого скрытого слоя
         self.layers[1].weights = np.random.randn(self.number_of_input_elements, self.number_of_neurons)

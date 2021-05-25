@@ -34,7 +34,7 @@ class InputLayer(Layer):
     np.random.seed(1)
 
     # Вектор входных данных (x)
-    def generate(self):
+    def generate_regression(self):
         self.array = np.random.randn(self.number_of_vectors, self.number_of_elements)
 
     # Вектор входных данных для задачи классификации (x, y)
@@ -80,7 +80,7 @@ class OutputLayer(Layer):
 
     # Вектор выходных данных (y)
     # Функция — sin(x)
-    def generate(self, input_layer):
+    def generate_regression(self, input_layer):
         sin_input_layer = np.sin(input_layer.array)
         array = []
         for vector in sin_input_layer:
@@ -93,7 +93,7 @@ class OutputLayer(Layer):
 
     # Вектор с метками класса
     def generate_classification(self, input_layer):
-        self.array = np.array([[0, 1] if element[1] >= 0 else [1, 0] for element in input_layer.array])
+        self.array = np.array([[1, 0] if element[1] >= 0 else [0, 1] for element in input_layer.array])
 
 
 # Скрытый слой
@@ -102,6 +102,8 @@ class HiddenLayer(Layer):
         super().__init__(number_of_vectors, number_of_elements)
         self.number_of_neurons = number_of_neurons
         self.layer_index = layer_index
+        # TODO: Если для каждого скрытого слоя задавать свое количество нейронов, то первый параметр должен быть
+        #  self.prev.number_of_neurons, то есть придется добавить отдельное поле для хранения предыдущего слоя
         self.weights = np.random.randn(self.number_of_neurons, self.number_of_neurons)
 
     def forward(self, elements):
