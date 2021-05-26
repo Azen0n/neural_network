@@ -28,10 +28,9 @@ class Layer:
 
 # Слой входных данных
 class InputLayer(Layer):
-    def __init__(self, number_of_vectors, number_of_elements):
+    def __init__(self, number_of_vectors, number_of_elements, seed):
         super().__init__(number_of_vectors, number_of_elements)
-
-    np.random.seed(1)
+        np.random.seed(seed)
 
     # Вектор входных данных (x)
     def generate_regression(self):
@@ -129,15 +128,23 @@ class ActivationFunction(Layer):
         # Сразу в конструкторе определяем функцию и ее производную
         self.function, self.derivative = get_function(function_type)
 
-    def forward(self, elements):
+    def forward(self, elements, output_array=None):
         print('activation function layer — %s):' % self.function_type)
-        self.array = self.function(elements)
+
+        if output_array is not None:
+            self.array = self.function(elements, output_array)
+        else:
+            self.array = self.function(elements)
+
         print(self.array)
         return self.array
 
     def backward(self, upstream_gradient, output_array=None):
-        # Домножаю на upstream_gradient (чтобы да)
-        return self.derivative(self.array).dot(upstream_gradient)
+
+        if output_array is not None:
+            return self.derivative(self.array, output_array).dot(upstream_gradient)
+        else:
+            return self.derivative(self.array).dot(upstream_gradient)
 
 
 # Тесты приколов
