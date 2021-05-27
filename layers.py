@@ -62,7 +62,9 @@ class OutputLayer(Layer):
     # Генерация весов
     # number_of_neurons — количество нейронов ПОСЛЕДНЕГО СЛОЯ
     def generate_weights(self, number_of_neurons):
-        self.weights = np.random.randn(number_of_neurons, self.number_of_elements)
+        self.weights = np.array(
+            [[np.random.uniform(0, 1) for _ in range(self.number_of_elements)] for _ in
+             range(number_of_neurons)])
 
     def forward(self, elements):
         self.saved_array = elements
@@ -73,9 +75,9 @@ class OutputLayer(Layer):
 
     def backward(self, upstream_gradient, output_array=None):
         # Умножение upstream и local градиентов
-        # grad_elements = upstream_gradient * self.weights.T  # dz/dx * dL/dz
-        grad_weights = self.saved_array.T.dot(upstream_gradient)  # dz/dy * dL/dz
-        return grad_weights
+        grad_weights = self.saved_array.T.dot(upstream_gradient)
+        grad_elements = upstream_gradient.dot(self.weights.T)
+        return grad_elements, grad_weights
 
     # Вектор выходных данных (y)
     # Функция — sin(x)
@@ -103,7 +105,9 @@ class HiddenLayer(Layer):
         self.layer_index = layer_index
         # TODO: Если для каждого скрытого слоя задавать свое количество нейронов, то первый параметр должен быть
         #  self.prev.number_of_neurons, то есть придется добавить отдельное поле для хранения предыдущего слоя
-        self.weights = np.random.randn(self.number_of_neurons, self.number_of_neurons)
+        self.weights = np.array(
+            [[np.random.uniform(0, 1) for _ in range(self.number_of_neurons)] for _ in
+             range(self.number_of_neurons)])
 
     def forward(self, elements):
         # Сохранение элементов для backwards
@@ -116,7 +120,8 @@ class HiddenLayer(Layer):
 
     def backward(self, upstream_gradient, output_array=None):
         grad_weights = self.saved_array.T.dot(upstream_gradient)
-        return grad_weights
+        grad_elements = upstream_gradient.dot(self.weights.T)
+        return grad_elements, grad_weights
 
 
 # Функция активации
@@ -131,6 +136,8 @@ class ActivationFunction(Layer):
     def forward(self, elements, output_array=None):
         print('activation function layer — %s):' % self.function_type)
 
+        self.saved_array = elements
+
         if output_array is not None:
             self.array = self.function(elements, output_array)
         else:
@@ -142,16 +149,10 @@ class ActivationFunction(Layer):
     def backward(self, upstream_gradient, output_array=None):
 
         if output_array is not None:
-            return self.derivative(self.array, output_array).dot(upstream_gradient)
+            return self.derivative(self.saved_array, output_array) * upstream_gradient, None
         else:
-            return self.derivative(self.array).dot(upstream_gradient)
+            return self.derivative(self.saved_array) * upstream_gradient, None
 
 
-# Тесты приколов
 if __name__ == "__main__":
-    function, derivative = get_function('sigmoid')
-    x = np.array([[1.0, 2.0, 3.0]])
-    f = function(x)
-    d = derivative(f)
-    print(f)
-    print(d)
+    print('Wrong script!')

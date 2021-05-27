@@ -18,7 +18,7 @@ def sigmoid(x):
 
 @np.vectorize
 def sigmoid_derivative(x):
-    return (1.0 - x) * x
+    return (1.0 - sigmoid(x)) * sigmoid(x)
 
 
 @np.vectorize
@@ -48,10 +48,10 @@ def softmax(x):
     return e_x / e_x.sum(axis=len(e_x.shape) - 1)[:, None]
 
 
-# reshape softmax to 2d so np.dot gives matrix multiplication
 def softmax_derivative(x):
-    s = x.reshape(-1, 1)
-    return np.diagflat(s) - s.dot(s.T)
+    # s = x.reshape(-1, 1)
+    # return np.diagflat(s) - s.dot(s.T)
+    return x * (1.0 - x)
 
 
 def l2(x, y):
@@ -79,3 +79,10 @@ def get_function(function_type):
     # ReLU по умолчанию
     else:
         return relu, relu_derivative
+
+
+if __name__ == "__main__":
+    array = np.array([[1.27896796e+83, 7.88375864e+83]])
+    print('Array: %s' % array)
+    ans = softmax(array)
+    print('Softmax: %s' % ans)
